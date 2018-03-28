@@ -24,9 +24,4 @@
         android:orderInCategory="1"
         android:title="@string/action_refresh"
         app:showAsAction="ifRoom"/>
-    <item
-        android:title="Show Map"
-        android:orderInCategory="2"
-        app:showAsAction="never"
-        android:id="@+id/action_open_map"/>
 </menu>

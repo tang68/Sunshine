@@ -15,26 +15,32 @@
  */
 package com.example.android.sunshine;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.android.sunshine.ForecastAdapter.ForecastAdapterOnClickHandler;
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements ForecastAdapterOnClickHandler {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private ForecastAdapter mForecastAdapter;
@@ -106,10 +112,19 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         new FetchWeatherTask().execute(location);
     }
 
+    /**
+     * This method is overridden by our MainActivity class in order to handle RecyclerView item
+     * clicks.
+     *
+     * @param weatherForDay The weather for the day that was clicked
+     */
     @Override
     public void onClick(String weatherForDay) {
-        Toast toast = Toast.makeText(this, weatherForDay, Toast.LENGTH_LONG);
-        toast.show();
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
+        startActivity(intentToStartDetailActivity);
     }
 
     /**
@@ -139,8 +154,6 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
-
-
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
@@ -208,6 +221,24 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             return true;
         }
 
+        else if (id == R.id.action_open_map) {
+            openLocationInMap();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openLocationInMap() {
+        String address = "16012 Garrett Ct, La Puente, Ca 91744";
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("geo").appendPath("0,0").appendQueryParameter("q", address);
+        Uri uri = builder.build();
+        Intent intentToLaunchMap = new Intent(Intent.ACTION_VIEW, uri);
+
+        if (intentToLaunchMap.resolveActivity(getPackageManager()) != null) {
+            startActivity(intentToLaunchMap);
+        } else {
+            Log.d(TAG, "Couldn't call " + builder.toString()
+                    + ", no receiving apps installed!");
+        }
     }
 }

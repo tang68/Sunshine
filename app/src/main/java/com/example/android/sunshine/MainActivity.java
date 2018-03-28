@@ -15,11 +15,16 @@
  */
 package com.example.android.sunshine;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -108,8 +113,11 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
     @Override
     public void onClick(String weatherForDay) {
-        Toast toast = Toast.makeText(this, weatherForDay, Toast.LENGTH_LONG);
-        toast.show();
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
+        startActivity(intentToStartDetailActivity);
     }
 
     /**
@@ -207,7 +215,23 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             loadWeatherData();
             return true;
         }
+        else if (id == R.id.action_open_map) {
+            openLocationInMap();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openLocationInMap() {
+        String address = "Los Angles";
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("geo").appendPath("0,0").appendQueryParameter("q", address);
+        Uri uri = builder.build();
+        Intent intentToLaunchMap = new Intent(Intent.ACTION_VIEW, uri);
+
+        if (intentToLaunchMap.resolveActivity(getPackageManager()) != null) {
+            startActivity(intentToLaunchMap);
+        }
     }
 }

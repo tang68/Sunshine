@@ -1,3 +1,7 @@
-#Android Weather Forecast App
+# Android Weather Forecast App
 
-![dfgdf](Sunshine/Screen Shot 2018-06-10 at 6.47.53 PM.png?raw=true "Optional Title")
+![Main View](screenshots/Screenshot1.png?raw=true "Main View")
+
+![Detail View](screenshots/Screenshot2.png?raw=true "Detail View")
+
+![Settings](screenshots/Screenshot3.png?raw=true "Settings")
